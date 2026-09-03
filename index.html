@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CD Portfolio - Kristian Kirkegaard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif;
+            background: linear-gradient(135deg, #f5f5f5 0%, #ffffff 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #000;
+        }
+
+        .container {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            background: #fafafa;
+        }
+
+        #canvas {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+
+        .instruction {
+            position: absolute;
+            top: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+            font-size: 14px;
+            color: rgba(0, 0, 0, 0.5);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 500;
+            animation: fadeInOut 4s ease-in-out infinite;
+        }
+
+        @keyframes fadeInOut {
+            0%, 100% { opacity: 0; }
+            50% { opacity: 1; }
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 100;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.3s ease-in;
+            backdrop-filter: blur(2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .modal-content {
+            background: #ffffff;
+            margin: 3% auto;
+            padding: 0;
+            border: 1px solid #e0e0e0;
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            border-radius: 2px;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-left {
+            position: relative;
+            overflow: hidden;
+            border-right: 1px solid #e0e0e0;
+            background: #f5f5f5;
+        }
+
+        .modal-left img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.4s ease;
+        }
+
+        .modal-left img:hover {
+            transform: scale(1.02);
+        }
+
+        .modal-right {
+            padding: 50px 45px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            background: #ffffff;
+        }
+
+        .modal-right::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .modal-right::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .modal-right::-webkit-scrollbar-thumb {
+            background: #d0d0d0;
+            border-radius: 4px;
+        }
+
+        .modal-right::-webkit-scrollbar-thumb:hover {
+            background: #00a890;
+        }
+
+        .modal-right h2 {
+            color: #000;
+            margin-bottom: 8px;
+            font-size: 28px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+        }
+
+        .artist-name {
+            color: #00a890;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        .modal-right p {
+            line-height: 1.7;
+            margin-bottom: 20px;
+            color: rgba(0, 0, 0, 0.7);
+            font-size: 14px;
+            font-weight: 400;
+        }
+
+        .video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%;
+            height: 0;
+            margin: 30px 0;
+            border-radius: 1px;
+            overflow: hidden;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+        }
+
+        .video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        .image-gallery {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 30px 0;
+        }
+
+        .gallery-img {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 1px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid #e0e0e0;
+        }
+
+        .gallery-img:hover {
+            transform: scale(1.05);
+            border-color: #00a890;
+            box-shadow: 0 4px 12px rgba(0, 168, 144, 0.2);
+        }
+
+        .wall-limit {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.5);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .lock-icon {
+            width: 16px;
+            height: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .close-btn {
+            position: absolute;
+            left: 30px;
+            top: 30px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #000;
+            cursor: pointer;
+            z-index: 101;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 1px;
+            background: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .close-btn:hover {
+            color: #00a890;
+            border-color: #00a890;
+            background: rgba(0, 168, 144, 0.05);
+        }
+
+        @media (max-width: 768px) {
+            .modal-content {
+                grid-template-columns: 1fr;
+                height: 90vh;
+            }
+
+            .modal-left {
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+                height: 35%;
+            }
+
+            .modal-right {
+                padding: 30px 20px;
+                height: 65%;
+            }
+
+            .image-gallery {
+                grid-template-columns: repeat(3, 1fr);
+            }
+
+            .modal-right h2 {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <canvas id="canvas"></canvas>
+        <div class="instruction">Hover to pull • Click to open</div>
+    </div>
+
+    <div id="cdModal" class="modal">
+        <button class="close-btn">BACK</button>
+        <div class="modal-content">
+            <div class="modal-left">
+                <img id="modalImage" src="" alt="Project Image">
+            </div>
+            <div class="modal-right">
+                <div class="artist-name" id="modalArtist">Artist</div>
+                <h2 id="modalTitle">Project Title</h2>
+                <p id="modalDescription">Project description goes here...</p>
+                
+                <div class="video-container" id="videoContainer" style="display: none;">
+                    <iframe id="videoFrame" allowfullscreen></iframe>
+                </div>
+
+                <div class="image-gallery" id="imageGallery"></div>
+
+                <div class="wall-limit">
+                    <div class="lock-icon">🔒</div>
+                    <span>Wall limit</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script>
+        // Scene setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0xfafafa);
+        scene.fog = new THREE.Fog(0xfafafa, 20, 50);
+
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.z = 6;
+
+        const canvas = document.getElementById('canvas');
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        renderer.shadowMap.type = THREE.PCFShadowShadowMap;
+        renderer.outputColorSpace = THREE.SRGBColorSpace;
+        canvas.parentElement.appendChild(renderer.domElement);
+
+        // Lighting - minimalist, soft
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        directionalLight.position.set(8, 6, 8);
+        directionalLight.castShadow = true;
+        directionalLight.shadow.mapSize.width = 2048;
+        directionalLight.shadow.mapSize.height = 2048;
+        directionalLight.shadow.camera.left = -10;
+        directionalLight.shadow.camera.right = 10;
+        directionalLight.shadow.camera.top = 10;
+        directionalLight.shadow.camera.bottom = -10;
+        directionalLight.shadow.bias = -0.0001;
+        scene.add(directionalLight);
+
+        // Subtle fill light
+        const fillLight = new THREE.DirectionalLight(0xffffff, 0.3);
+        fillLight.position.set(-5, 3, 3);
+        scene.add(fillLight);
+
+        // CD Data
+        const cdData = [
+            {
+                id: 1,
+                artist: "SAKR",
+                title: "Linear Echoes",
+                description: "Et ambiøst projekt som udforsker grænsen mellem digitale lyde og klassisk musik. Kombinerer synth-pop elementer med orchestralt arrangement. Værket blev udviklet over 18 måneder og inkluderer samarbejde med internationale kunstnere.",
+                image: "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=800&h=800&fit=crop",
+                video: "https://www.youtube.com/embed/dQw4w9WgXcQ",
+                gallery: [
+                    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=100&h=100&fit=crop"
+                ],
+                color: 0x1a1a1a,
+                position: { x: -3.5, y: 0.5, z: 0 }
+            },
+            {
+                id: 2,
+                artist: "KRISTIAN",
+                title: "SUS",
+                description: "Et audio-reaktivt lysinstallationsprojekt. Udforskeren koblingen mellem spatial audio, realtids-visuals og interaktiv navigation. Sammensmeltning af lyddesign og teknisk-kreativ udvikling. Projektet integrerer GPS-tracking og audio-reaktive lysystemer.",
+                image: "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=800&h=800&fit=crop",
+                video: "https://www.youtube.com/embed/jNQXAC9IVRw",
+                gallery: [
+                    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop"
+                ],
+                color: 0x2a2a2a,
+                position: { x: 0, y: 0.5, z: 0 }
+            },
+            {
+                id: 3,
+                artist: "KIRKEGAARD",
+                title: "Ambient Waves",
+                description: "Et meditativt album med fokus på ambient musik og naturlige lyde. Kombinerer elektronisk musik med field recordings fra naturen. Hvert track repræsenterer en unik geografisk lokation og skal skabe en immersiv audiovisuel oplevelse.",
+                image: "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=800&h=800&fit=crop",
+                video: "https://www.youtube.com/embed/BJ0bCwOV4mQ",
+                gallery: [
+                    "https://images.unsplash.com/photo-1514525253161-7a46d19cd819?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=100&h=100&fit=crop",
+                    "https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=100&h=100&fit=crop"
+                ],
+                color: 0x0a0a0a,
+                position: { x: 3.5, y: 0.5, z: 0 }
+            }
+        ];
+
+        // CD Class
+        class CD {
+            constructor(data) {
+                this.data = data;
+                this.group = new THREE.Group();
+                this.isHovered = false;
+                this.targetPullDistance = 0;
+                this.currentPullDistance = 0;
+                this.rotationVelocity = 0;
+
+                this.createCDGeometry();
+                this.group.position.set(data.position.x, data.position.y, data.position.z);
+                scene.add(this.group);
+            }
+
+            createCDGeometry() {
+                // Main CD disc
+                const cdGeometry = new THREE.CylinderGeometry(1.2, 1.2, 0.08, 64);
+                const cdMaterial = new THREE.MeshStandardMaterial({
+                    color: this.data.color,
+                    metalness: 0.6,
+                    roughness: 0.3,
+                    side: THREE.DoubleSide
+                });
+                const cdMesh = new THREE.Mesh(cdGeometry, cdMaterial);
+                cdMesh.castShadow = true;
+                cdMesh.receiveShadow = true;
+                this.group.add(cdMesh);
+
+                // Center hole
+                const holeGeometry = new THREE.CylinderGeometry(0.25, 0.25, 0.12, 32);
+                const holeMaterial = new THREE.MeshStandardMaterial({
+                    color: 0x000000,
+                    metalness: 0.8,
+                    roughness: 0.2
+                });
+                const holeMesh = new THREE.Mesh(holeGeometry, holeMaterial);
+                holeMesh.position.z = 0.06;
+                holeMesh.castShadow = true;
+                this.group.add(holeMesh);
+
+                // CD label/texture
+                this.createCDLabel();
+
+                // CD Case (glass-like)
+                this.createCDCase();
+            }
+
+            createCDLabel() {
+                const canvas = document.createElement('canvas');
+                canvas.width = 512;
+                canvas.height = 512;
+                const ctx = canvas.getContext('2d');
+
+                // Subtle background
+                ctx.fillStyle = '#1a1a1a';
+                ctx.fillRect(0, 0, 512, 512);
+
+                // Minimal circle design
+                ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(256, 256, 180, 0, Math.PI * 2);
+                ctx.stroke();
+
+                // Title text
+                ctx.fillStyle = 'rgba(255,255,255,0.9)';
+                ctx.font = 'bold 36px -apple-system, BlinkMacSystemFont, sans-serif';
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(this.data.title.substring(0, 8), 256, 256);
+
+                const texture = new THREE.CanvasTexture(canvas);
+                const material = new THREE.MeshStandardMaterial({
+                    map: texture,
+                    metalness: 0.5,
+                    roughness: 0.4
+                });
+
+                const geometry = new THREE.CylinderGeometry(1.18, 1.18, 0.05, 64);
+                const textMesh = new THREE.Mesh(geometry, material);
+                textMesh.position.z = 0.06;
+                textMesh.castShadow = true;
+                this.group.add(textMesh);
+            }
+
+            createCDCase() {
+                // Glass-like case
+                const caseGeometry = new THREE.BoxGeometry(1.35, 2.0, 0.12);
+                const caseMaterial = new THREE.MeshStandardMaterial({
+                    color: 0xffffff,
+                    metalness: 0.2,
+                    roughness: 0.6,
+                    transparent: true,
+                    opacity: 0.6,
+                    side: THREE.DoubleSide
+                });
+                const caseMesh = new THREE.Mesh(caseGeometry, caseMaterial);
+                caseMesh.position.z = -0.4;
+                caseMesh.castShadow = true;
+                caseMesh.receiveShadow = true;
+                this.group.add(caseMesh);
+
+                // Case edge highlight
+                const edgeGeometry = new THREE.EdgesGeometry(caseGeometry);
+                const line = new THREE.LineSegments(
+                    edgeGeometry,
+                    new THREE.LineBasicMaterial({ color: 0x00a890, linewidth: 1, transparent: true, opacity: 0.3 })
+                );
+                line.position.copy(caseMesh.position);
+                this.group.add(line);
+            }
+
+            setHovered(hovered) {
+                this.isHovered = hovered;
+                this.targetPullDistance = hovered ? 2.2 : 0;
+            }
+
+            update() {
+                // Smooth pull animation
+                this.currentPullDistance += (this.targetPullDistance - this.currentPullDistance) * 0.08;
+                this.group.position.z = this.data.position.z + this.currentPullDistance;
+
+                // Rotation
+                if (this.isHovered) {
+                    this.rotationVelocity = Math.min(this.rotationVelocity + 0.04, 0.15);
+                } else {
+                    this.rotationVelocity *= 0.92;
+                }
+                this.group.rotation.y += this.rotationVelocity;
+            }
+        }
+
+        // Create CDs
+        const cds = cdData.map(data => new CD(data));
+
+        // Raycaster for mouse interaction
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+        document.addEventListener('mousemove', (event) => {
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+
+            cds.forEach(cd => cd.setHovered(false));
+
+            const intersects = raycaster.intersectObjects(scene.children, true);
+            for (let i = 0; i < intersects.length; i++) {
+                const object = intersects[i].object;
+                if (object.userData.cdInstance) {
+                    object.userData.cdInstance.setHovered(true);
+                    document.body.style.cursor = 'pointer';
+                    break;
+                }
+            }
+            if (intersects.length === 0) {
+                document.body.style.cursor = 'default';
+            }
+        });
+
+        // Mark CD meshes for raycasting
+        cds.forEach(cd => {
+            cd.group.traverse(child => {
+                if (child.isMesh && child.geometry.type === 'CylinderGeometry') {
+                    child.userData.cdInstance = cd;
+                }
+            });
+        });
+
+        document.addEventListener('click', (event) => {
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children, true);
+
+            for (let i = 0; i < intersects.length; i++) {
+                const object = intersects[i].object;
+                if (object.userData.cdInstance) {
+                    openModal(object.userData.cdInstance.data);
+                    break;
+                }
+            }
+        });
+
+        // Modal functionality
+        const modal = document.getElementById('cdModal');
+        const closeBtn = document.querySelector('.close-btn');
+
+        function openModal(data) {
+            document.getElementById('modalArtist').textContent = data.artist;
+            document.getElementById('modalTitle').textContent = data.title;
+            document.getElementById('modalDescription').textContent = data.description;
+            document.getElementById('modalImage').src = data.image;
+
+            const videoContainer = document.getElementById('videoContainer');
+            if (data.video) {
+                videoContainer.style.display = 'block';
+                document.getElementById('videoFrame').src = data.video;
+            } else {
+                videoContainer.style.display = 'none';
+            }
+
+            // Gallery
+            const gallery = document.getElementById('imageGallery');
+            gallery.innerHTML = '';
+            data.gallery.forEach(img => {
+                const imgElement = document.createElement('img');
+                imgElement.src = img;
+                imgElement.className = 'gallery-img';
+                gallery.appendChild(imgElement);
+            });
+
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            document.getElementById('videoFrame').src = '';
+        });
+
+        window.addEventListener('click', (event) => {
+            if (event.target === modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = 'auto';
+                document.getElementById('videoFrame').src = '';
+            }
+        });
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+
+            cds.forEach(cd => cd.update());
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+</body>
+</html>

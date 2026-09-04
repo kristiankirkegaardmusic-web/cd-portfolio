@@ -1,52 +1,44 @@
-// Initialize scene
-initScene();
-
-// Raycaster for mouse interaction
-const raycaster = new THREE.Raycaster();
-const mouse = new THREE.Vector2();
-
-document.addEventListener('mousemove', (event) => {
-    mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
-    mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-
-    raycaster.setFromCamera(mouse, camera);
-
-    cds.forEach(cd => cd.setHovered(false));
-
-    const intersects = raycaster.intersectObjects(scene.children, true);
-    for (let i = 0; i < intersects.length; i++) {
-        const object = intersects[i].object;
-        if (object.userData.cdInstance) {
-            object.userData.cdInstance.setHovered(true);
-            document.body.style.cursor = 'pointer';
-            break;
+// Smooth scroll behavior for navigation links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+        e.preventDefault();
+        const target = document.querySelector(this.getAttribute('href'));
+        if (target) {
+            target.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         }
-    }
-    if (intersects.length === 0) {
-        document.body.style.cursor = 'default';
-    }
+    });
 });
 
-document.addEventListener('click', (event) => {
-    raycaster.setFromCamera(mouse, camera);
-    const intersects = raycaster.intersectObjects(scene.children, true);
+// Intersection Observer for fade-in animations
+const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+};
 
-    for (let i = 0; i < intersects.length; i++) {
-        const object = intersects[i].object;
-        if (object.userData.cdInstance) {
-            openModal(object.userData.cdInstance.data);
-            break;
+const observer = new IntersectionObserver(function(entries) {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.style.opacity = '1';
+            entry.target.style.transform = 'translateY(0)';
         }
-    }
+    });
+}, observerOptions);
+
+// Observe elements for animation
+document.querySelectorAll('.concept-item, .feature-item').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(20px)';
+    el.style.transition = 'all 0.6s ease';
+    observer.observe(el);
 });
 
-// Animation loop
-function animate() {
-    requestAnimationFrame(animate);
-
-    cds.forEach(cd => cd.update());
-
-    renderer.render(scene, camera);
+// Mobile menu toggle
+const navLinks = document.querySelector('.nav-links');
+if (window.innerWidth < 768) {
+    navLinks.style.flexDirection = 'column';
 }
 
-animate();
+console.log('✨ Kristian Kirkegaard Concept - Loaded Successfully');

@@ -1,173 +1,111 @@
-# CD Portfolio - Interactive Three.js Experience
+# Kristian Kirkegaard - Concept
 
-En interaktiv webapplikation der viser dine musikprojekter som 3D CD'er med minimalistisk design inspireret af skandinavisk arkitektur.
+A professional concept website for multimedia installations and interactive audio-visual experiences.
+
+## Overview
+
+This is a clean, minimalist concept site designed for magazine pitches and professional presentations. It showcases:
+
+- **Hero Section** - Full-screen visual impact
+- **Concept Overview** - Project description and vision
+- **Visual Identity Grid** - Three showcase images
+- **Embedded Video** - Professional video presentation
+- **Key Features** - Core value propositions
+- **Call-to-Action** - Contact section
 
 ## Features
 
-✨ **Interactive 3D CD Display**
-- 3D CD'er med realistisk metallisk finish
-- Glas-lignende covers
-- Dynamisk belysning og skygger
-
-🎯 **Interaktivitet**
-- Hover over CD'erne for at trække dem ud
-- Klik for at åbne detaljeret modal
-- Smooth animations og transitions
-
-📱 **Responsive Design**
-- Virker på alle enheder (desktop, tablet, mobil)
-- Optimeret for alle skærmstørrelser
-
-🎨 **Minimalistisk Design**
-- Clean, moderne æstetik
-- Teal accent farver (#00a890)
-- Sort og hvid farveskema
+✨ **Minimalist Design** - Clean, modern aesthetic
+✨ **Responsive** - Works on all devices
+✨ **Smooth Animations** - Subtle, professional transitions
+✨ **Video Ready** - Easy to embed videos
+✨ **Easy to Update** - Simple structure for quick changes
 
 ## File Structure
 
 ```
-cd-portfolio/
-├── index.html              # HTML struktur
+├── index.html          # Main HTML file
 ├── css/
-│   ├── style.css          # Generelle styles
-│   └── modal.css          # Modal styles
+│   └── main.css       # All styling
 ├── js/
-│   ├── data.js            # Projekt data
-│   ├── cd.js              # CD klasse
-│   ├── scene.js           # Three.js scene opsætning
-│   ├── modal.js           # Modal funktionalitet
-│   └── main.js            # Hovedscript og interaktivitet
-└── README.md              # Denne fil
+│   └── main.js        # Interactivity
+└── README.md          # This file
 ```
 
-## Installation
+## Quick Start
 
-1. **Clone repositoryet**
-```bash
-git clone https://github.com/kristiankirkegaardmusic-web/cd-portfolio.git
-cd cd-portfolio
+1. Clone the repository
+2. Open `index.html` in your browser
+3. Customize content in `index.html`
+4. Update images and videos as needed
+
+## Customization
+
+### Update Images
+
+Replace the placeholder images by changing the `src` attributes in `index.html`:
+
+```html
+<img src="your-image-url.jpg" alt="Description">
 ```
 
-2. **Åbn filen i browser**
-   - Dobbeltklik på `index.html` eller
-   - Brug en lokal server (anbefalet)
+### Update Video
 
-3. **Brug lokal server (Python)**
-```bash
-python -m http.server 8000
+To change the YouTube video, update the embed URL:
+
+```html
+<iframe src="https://www.youtube.com/embed/YOUR_VIDEO_ID"></iframe>
 ```
-Åbn derefter `http://localhost:8000` i din browser
 
-## Brug
+### Change Text
 
-### Tilføj dine egne projekter
+Edit the text content directly in `index.html`:
 
-Redigér `js/data.js` og tilføj dine projekter:
+- Hero title and subtitle
+- About section paragraphs
+- Feature descriptions
+- Footer content
 
-```javascript
-{
-    id: 4,
-    artist: "Dit navn",
-    title: "Dit projekt",
-    description: "Beskrivelse af dit projekt...",
-    image: "URL til billede",
-    video: "YouTube embed URL",
-    gallery: [
-        "URL til billede 1",
-        "URL til billede 2",
-        "URL til billede 3",
-        "URL til billede 4"
-    ],
-    color: 0x1a1a1a,  // Hexadecimal farve
-    position: { x: -3.5, y: 0.5, z: 0 }
+### Customize Colors
+
+Edit CSS variables in `css/main.css`:
+
+```css
+:root {
+    --accent-color: #00a890;  /* Change this color */
+    --text-color: #1a1a1a;
+    --light-gray: #f5f5f5;
 }
 ```
 
-### Tilpas farver
+## Technologies
 
-I `data.js`, ændr `color` egenskaben med din ønskede farve:
-- Sort: `0x000000`
-- Grå: `0x666666`
-- Teal: `0x00a890`
-- Brugerdefineret: Konverter RGB til hexadecimal
-
-### YouTube Video Embeds
-
-For at få YouTube embed URL:
-1. Gå til YouTube video
-2. Klik "Del" → "Integrer"
-3. Kopier URL fra `src` attributten
-4. Format: `https://www.youtube.com/embed/VIDEO_ID`
-
-## Teknologi Stack
-
-- **Three.js** - 3D grafik bibliotek
-- **HTML5/CSS3** - Markup & styling
-- **Vanilla JavaScript** - Interaktivitet
-- **WebGL** - 3D rendering
+- HTML5
+- CSS3
+- Vanilla JavaScript
+- Responsive Design
 
 ## Browser Support
 
-- Chrome (anbefalet)
+- Chrome (recommended)
 - Firefox
 - Safari
 - Edge
 - Mobile browsers
 
-## Performance Tips
+## Performance
 
-- Optimér billeder (komprimér før upload)
-- Brug CDN links for eksterne ressourcer
-- Test på lav-end devices
-- Monitor GPU usage
+- Lightweight and fast
+- Optimized images recommended
+- Smooth scrolling and animations
+- Mobile-first responsive design
 
-## Anpassning
+## Contact
 
-### Ændr baggrund farve
-I `css/style.css`, find `.container` og ændr `background` farve:
-```css
-.container {
-    background: #fafafa; /* Ændr denne farve */
-}
-```
-
-### Ændr CD størrelse
-I `js/cd.js`, find `createCDGeometry()` og ændr tal i `CylinderGeometry(1.2, 1.2, 0.08, 64)`:
-- Første tal: radius (størrelse)
-- Tredje tal: tykkelse
-- Fjerde tal: segments (glathed)
-
-### Ændr animationshastighed
-I `js/cd.js`, find `update()` metoden og ændr tal:
-```javascript
-this.currentPullDistance += (this.targetPullDistance - this.currentPullDistance) * 0.08; // Ændr 0.08
-this.rotationVelocity = Math.min(this.rotationVelocity + 0.04, 0.15); // Ændr 0.04 og 0.15
-```
-
-## Troubleshooting
-
-**Problemet:** CD'erne vises ikke
-- Løsning: Tjek browserens konsol (F12) for fejl
-- Sikr at Three.js CDN URL er tilgængelig
-
-**Problemet:** Modal åbnes ikke
-- Løsning: Tjek at `modal.js` er korrekt indlæst
-- Kontroller at CD data er korrekt formateret
-
-**Problemet:** Videoer spiller ikke
-- Løsning: Tjek YouTube embed URL format
-- Sikr at video ikke er privat/blokeret
-
-## License
-
-MIT License - Frit til brug og ændring
-
-## Kontakt
-
-Kristian Kirkegaard Music
-- GitHub: [@kristiankirkegaardmusic-web](https://github.com/kristiankirkegaardmusic-web)
-- Email: kristiankirkegaardmusic@gmail.com
+Kristian Kirkegaard
+Email: kristiankirkegaardmusic@gmail.com
+GitHub: @kristiankirkegaardmusic-web
 
 ---
 
-**Vigtig bemærkning:** Tjek altid browserens developer tools (F12) for performance og debugging.
+**Last Updated:** September 2026
